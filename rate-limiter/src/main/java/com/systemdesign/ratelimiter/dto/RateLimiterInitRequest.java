@@ -19,9 +19,6 @@ public class RateLimiterInitRequest {
     // leaky bucket
     private Integer leakRate;
 
-    // getters + setters
-
-
     public RateLimiterAlgoType getAlgorithm() {
         return algorithm;
     }
