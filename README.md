@@ -114,14 +114,13 @@ ratelimiter/
 * TypeScript
 * Tailwind CSS
 * Framer Motion
-* Shadcn UI
 
 ### Backend
 
 * Java 25
 * Spring Boot
 * REST APIs
-
+* Strategy & Factory design patterns
 
 ## 🚀 Running the Project Locally
 
@@ -163,10 +162,10 @@ http://localhost:3000
 
 ## 🔮 Future Improvements
 
-* Redis-backed distributed rate limiting
-* Per-user / per-IP / per-API-key policies
-* Adaptive rate limits based on traffic patterns
-* Persistent metrics and monitoring dashboards
+*  Distributed rate limiting using Redis or similar stores
+*  Dynamic limits based on traffic patterns or user tiers
+*  Role- or auth-based rate limiting (API keys / JWT)
+*  Integration with API gateways and cloud setups
 
 
 
