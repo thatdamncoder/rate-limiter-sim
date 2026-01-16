@@ -1,54 +1,53 @@
 # 🚦 Rate Limiter Visualizer
 
-Rate limiting is a **core backend system design concept** used to control how frequently a client can access an API or service.
-This project **implements real rate limiting algorithms on the backend** and visualizes their behavior **in real time on the frontend** for better intuition and understanding.
+Rate limiting is a **fundamental backend system design concept** used to control how frequently a client can access an API or service.
+This project **implements real rate limiting algorithms on the backend** and **visualizes their behavior in real time on the frontend**, making abstract concepts intuitive and easy to reason about.
 
-### 📽 Demo 
-**Drive Link:** https://drive.google.com/file/d/1W0jT39CUNEDIaEak-3oMeD8qRct7BvPE/view?usp=sharing
 
----
 
-## 🧠 What is Rate Limiting?
+## 📽 Demo
 
-**Rate limiting** restricts the number of requests a client can make within a specific time window.
+🎥 **Project Recording**
+[https://drive.google.com/file/d/1W0jT39CUNEDIaEak-3oMeD8qRct7BvPE/view?usp=sharing](https://drive.google.com/file/d/1W0jT39CUNEDIaEak-3oMeD8qRct7BvPE/view?usp=sharing)
 
-**Example:**
-Allow at most **5 requests per 10 seconds per user**.
+📷 Screenshots for each algorithm are included below.
 
----
 
-## ❓ Why Do We Need Rate Limiting?
 
-Rate limiting is essential to:
+## 🧠 Rate Limiting (Brief)
 
-* Prevent system overload
-* Protect APIs from abuse and DDoS attacks
-* Ensure fair usage across clients
-* Maintain predictable system performance
-* Control infrastructure costs
+**Rate limiting** restricts how many requests a client can make within a defined time window
+(e.g., *5 requests per 10 seconds*).
 
-Almost every large-scale system uses rate limiters at multiple layers.
+It is critical for:
 
----
+* Protecting services from abuse and traffic spikes
+* Preventing system overload and cascading failures
+* Ensuring fair usage across users
+* Maintaining predictable performance and costs
 
-## 🧩 Rate Limiting Algorithms
+This is a core building block in almost every large-scale backend system.
 
-> All algorithms below are **actually implemented in the backend**.
-> The frontend visualizes **real allow / block decisions** based on live timestamps.
 
----
+
+## 🧩 Implemented Rate Limiting Algorithms
+
+> All algorithms below are **fully implemented in the backend**.
+> The frontend reflects **real allow / block decisions**, not mocked behavior.
+
 
 ### 1️⃣ Fixed Window Counter
 
-Counts requests in fixed time intervals and resets the counter at each window boundary.
+Counts requests in fixed intervals and resets at each window boundary.
 
 📷 **Visualization**
 ![FixedWindow](./assets/FixedWindow.png)
+
 ---
 
 ### 2️⃣ Sliding Window Log
 
-Stores timestamps of requests and counts only those within the last time window.
+Stores request timestamps and counts only those within the rolling window.
 
 📷 **Visualization**
 ![SlidingWindowLog](./assets/SlidingWindowLog.png)
@@ -57,7 +56,7 @@ Stores timestamps of requests and counts only those within the last time window.
 
 ### 3️⃣ Sliding Window Counter
 
-Uses weighted counts from the current and previous window to reduce boundary bursts.
+Uses weighted counts from the current and previous window to smooth burst traffic.
 
 📷 **Visualization**
 ![SlidingWindowCounter](./assets/SlidingWindowCounter.png)
@@ -66,7 +65,7 @@ Uses weighted counts from the current and previous window to reduce boundary bur
 
 ### 4️⃣ Token Bucket
 
-Allows requests as long as tokens are available, refilling tokens at a fixed rate.
+Requests are allowed while tokens are available, refilled at a steady rate.
 
 📷 **Visualization**
 ![TokenBucket](./assets/TokenBucket.png)
@@ -75,27 +74,37 @@ Allows requests as long as tokens are available, refilling tokens at a fixed rat
 
 ### 5️⃣ Leaky Bucket
 
-Processes requests at a constant rate, rejecting excess requests when the bucket overflows.
+Processes requests at a constant rate and drops excess traffic on overflow.
 
 📷 **Visualization**
 ![LeakyBucket](./assets/LeakyBucket.png)
 
----
 
-## 🏗 Architecture Overview
+## 🗂 Backend Design (LLD-Oriented)
+
+The backend is structured to clearly demonstrate **Low-Level Design principles** such as separation of concerns, extensibility, and clean abstractions.
 
 ```
-Frontend (React + TypeScript)
-        |
-        | REST API
-        ↓
-Backend (Spring Boot)
-        |
-        ↓
-Rate Limiter Algorithms
+ratelimiter/
+├── controller        // REST endpoints
+├── dto               // API request/response models
+├── enums             // Algorithm types
+├── exception         // Centralized error handling
+├── model             // Configuration & state models
+├── service
+│   ├── algorithm     // Rate limiting strategies
+│   └── factory       // Algorithm selection (Factory pattern)
+├── store             // In-memory state management
+└── RateLimiterApplication.java
 ```
 
----
+### Design Highlights
+
+* **Strategy Pattern** for interchangeable rate limiting algorithms
+* **Factory Pattern** for runtime algorithm selection
+* Each algorithm maintains **its own isolated state**
+* Clear separation between **API layer, logic, and storage**
+
 
 ## 🧰 Tech Stack
 
@@ -103,8 +112,8 @@ Rate Limiter Algorithms
 
 * React
 * TypeScript
-* Framer Motion
 * Tailwind CSS
+* Framer Motion
 * Shadcn UI
 
 ### Backend
@@ -112,11 +121,9 @@ Rate Limiter Algorithms
 * Java 25
 * Spring Boot
 * REST APIs
-* Strategy & Factory patterns
 
----
 
-## 🚀 How to Run Locally
+## 🚀 Running the Project Locally
 
 ### Clone the Repository
 
@@ -124,8 +131,6 @@ Rate Limiter Algorithms
 git clone https://github.com/<your-username>/rate-limiter-visualizer.git
 cd rate-limiter-visualizer
 ```
-
----
 
 ### Start Backend
 
@@ -139,8 +144,6 @@ Backend runs on:
 ```
 http://localhost:8080
 ```
-
----
 
 ### Start Frontend
 
@@ -156,15 +159,23 @@ Frontend runs on:
 http://localhost:3000
 ```
 
----
 
-## Contributing
 
-Contributions and suggestions are welcome! To contribute:
+## 🔮 Future Improvements
 
-1. Fork the repository.
-2. Create a feature branch (git checkout -b your-feature-name).
-3. Commit your changes (git commit -m "Add new feature").
-4. Push to the branch (git push origin your-feature-name).
-5. Open a Pull Request.
+* Redis-backed distributed rate limiting
+* Per-user / per-IP / per-API-key policies
+* Adaptive rate limits based on traffic patterns
+* Persistent metrics and monitoring dashboards
 
+
+
+## 🤝 Contributing
+
+Contributions and suggestions are welcome!
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature-name`)
+3. Commit your changes (`git commit -m "Implement feature"`)
+4. Push to your branch (`git push origin feature-name`)
+5. Open a Pull Request
