@@ -1,0 +1,89 @@
+Base URL
+http://localhost:8080/api
+
+1.Initialize Rate Limiter
+Endpoint
+POST /api/init
+
+Request Body (JSON)
+{
+  "algorithm": "FIXED_WINDOW | SLIDING_WINDOW_COUNTER | SLIDING_WINDOW_LOG | LEAKY_BUCKET | TOKEN_BUCKET",
+  "maxRequests": number,     // required for window-based algorithms
+  "windowSize": number,      // window size in SECONDS
+  "bucketCapacity": number,  // required for bucket algorithms
+  "refillRate": number,      // token bucket: tokens per second
+  "leakRate": number         // leaky bucket: requests per second
+}
+Only fields relevant to the chosen algorithm will be present.
+
+Response
+{
+  "allowed": true,
+  "message": "Rate limiter initialized",
+  "algorithm": "FIXED_WINDOW"
+}
+
+
+
+2. Hit Rate-Limited Endpoint
+Endpoint
+GET /api/hit
+Each call represents one request attempt.
+Client is identified by IP (HttpServletRequest.getRemoteAddr()).
+
+HTTP Status Codes
+Request allowed	200 OK
+Rate limited	429 TOO_MANY_REQUESTS
+Limiter not initialized	400 BAD REQUEST
+Common Response Format
+{
+  "accepted": true | false,
+  "message": "ALLOWED | BLOCKED | algorithm-specific message",
+  "timestamp": epochMillis, (in millisecond)
+  "retryAfter": seconds, (in seconds always)
+  "metadata": { ... } (algorithm-specific fields)
+}
+
+3. Algorithm-Specific Metadata & Behavior
+FIXED WINDOW
+{
+  "currentCount": number,
+  "maxRequests": number,
+  "windowStart": epochMillis, (in millisecond)
+  "windowEnd": epochMillis, (in millisecond)
+}
+SLIDING WINDOW COUNTER
+{
+  "currentWindowCount": number,
+  "previousWindowCount": number,
+  "estimatedCount": number,
+  "windowStartInMillis": epochMillis, (in millisecond)
+  "windowEndInMillis": epochMillis (in millisecond)
+}
+SLIDING WINDOW LOG
+{
+  "currentWindowSize": number,
+  "maxRequests": number,
+  "windowSizeSeconds": number,
+  "windowLowerBoundMillis": epochMillis, (in millisecond)
+  "nowMillis": epochMillis (in millisecond)
+}
+LEAKY BUCKET
+{
+  "queueSize": number,
+  "capacity": number,
+  "leakRatePerSec": number
+}
+TOKEN BUCKET
+{
+  "tokensRemaining": number,
+  "bucketCapacity": number,
+  "refillRatePerSecond": number
+}
+
+4. Reset Rate Limiter
+Endpoint
+POST /api/reset
+Behavior
+Clears all internal state
+Frontend should reset counters, animations, and visuals
